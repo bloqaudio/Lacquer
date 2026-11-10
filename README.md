@@ -19,6 +19,7 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 
 | Addon | Clients |
 |---|---|
+| Bagnon (bags, item slots, and options) | all |
 | BigWigs | all |
 | BugSack | all |
 | DBM (bars and options window) | all |
@@ -28,9 +29,11 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 
 For BigWigs bars, choose the **Lacquer** bar style in BigWigs' Bars options. It follows whichever UI Lacquer is matching. BigWigs' own options window is styled with the Ace3 options windows.
 
+For Bagnon windows, choose the **Lacquer** skin in each frame's settings in Bagnon's options. Item slots and the options pages follow your UI on their own.
+
 DBM bars get a border in your UI's style around the bar and its icons. The bar texture, font, and spark stay as you set them in DBM.
 
-More are on the way: Ace3 options windows on every client; Bagnon, Questie, and RareScanner on Forever; AngrierWorldQuests, PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
+More are on the way: Ace3 options windows on every client; Questie, RareScanner, and Kaliel's Tracker on Forever; AngrierWorldQuests, PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
 
 ## Editions
 
