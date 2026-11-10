@@ -20,7 +20,7 @@ jobs:
             toc: Lacquer.toc
             version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/live/version.txt
           - flavor: forever
-            toc: Lacquer_Forever.toc
+            toc: Lacquer_Camelot.toc
             version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/forever/version.txt
           - flavor: classic-era
             toc: Lacquer_Vanilla.toc

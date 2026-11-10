@@ -2,7 +2,7 @@
 ## Title: Lacquer
 ## Notes: Skins third-party addons to match ElvUI or EllesmereUI.
 ## Author: bloqaudio
-## Version: 0.1.0
+## Version: @project-version@
 ## SavedVariables: LacquerDB
 ## OptionalDeps: ElvUI, Tukui, EllesmereUI
 ## X-Category: Interface Enhancements
