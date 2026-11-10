@@ -123,6 +123,13 @@ end
 ops.CheckBox = handler("HandleCheckBox")
 ops.EditBox = handler("HandleEditBox")
 ops.Slider = handler("HandleSliderFrame")
+ops.StepSlider = handler("HandleStepSlider")
+function ops.ArrowButton(button, direction)
+	if not has(S, "HandleNextPrevButton") then
+		return false
+	end
+	S:HandleNextPrevButton(button, direction)
+end
 ops.ItemButton = handler("HandleItemButton", true)
 ops.StatusBar = handler("HandleStatusBar")
 

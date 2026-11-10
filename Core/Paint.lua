@@ -6,7 +6,7 @@ ns.providers = { ns.ElvUIProvider, ns.EllesmereProvider }
 
 local OPERATIONS = {
 	"Window", "Panel", "Inset", "Clear", "Backdrop",
-	"Button", "CloseButton", "Tab", "CheckBox", "EditBox", "Dropdown", "ScrollBar", "Slider",
+	"Button", "CloseButton", "Tab", "CheckBox", "EditBox", "Dropdown", "ScrollBar", "Slider", "StepSlider", "ArrowButton",
 	"Icon", "ItemButton", "StatusBar", "Font",
 }
 
@@ -40,6 +40,53 @@ end
 -- Button. Recognise it by its mixin instead.
 function ns.IsDropdown(frame)
 	return type(frame.SetupMenu) == "function" and type(frame.OpenMenu) == "function"
+end
+
+local function styleSettingsControl(child)
+	local parent = child:GetParent()
+	if ns.IsDropdown(child) then
+		ns.Paint.Dropdown(child)
+		return false
+	elseif child.Slider and child.Back and child.Forward then
+		-- ElvUI's stepper slider style leaves the arrows as Blizzard drew them.
+		ns.Paint.StepSlider(child)
+		ns.Paint.ArrowButton(child.Back, "left")
+		ns.Paint.ArrowButton(child.Forward, "right")
+		return false
+	elseif child:IsObjectType("CheckButton") then
+		ns.Paint.CheckBox(child)
+	elseif child:IsObjectType("Slider") then
+		ns.Paint.Slider(child)
+	elseif not child:IsObjectType("Button") then
+		return
+	elseif child.Left and child.Middle and child.Right then
+		ns.Paint.Button(child)
+	elseif parent.DecrementButton == child then
+		ns.Paint.ArrowButton(child, "left")
+	elseif parent.IncrementButton == child then
+		ns.Paint.ArrowButton(child, "right")
+	end
+end
+
+local settingsLists = setmetatable({}, { __mode = "k" })
+
+-- For an addon's own copy of Blizzard's SettingsListTemplate on a canvas
+-- page, which the suites don't reach. Rows are pooled, so each is styled
+-- when it is initialized, under the calling skin's error isolation.
+function ns.StyleSettingsList(skin, list)
+	if settingsLists[list] then
+		return
+	end
+	settingsLists[list] = true
+	ns.Paint.ScrollBar(list.ScrollBar)
+	ns.Paint.Button(list.Header and list.Header.DefaultsButton)
+	local function styleRow(row)
+		skin:Call(ns.Walk, row, styleSettingsControl)
+	end
+	list.ScrollBox:ForEachFrame(styleRow)
+	list.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnInitializedFrame, function(_, row)
+		styleRow(row)
+	end, list)
 end
 
 local theme

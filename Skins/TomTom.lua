@@ -26,5 +26,17 @@ ns.RegisterSkin({
 
 		skin:Hook(_G.TomTom, "ShowHideCoordBlock", styleBlock)
 		styleBlock()
+
+		-- TomTom keeps its settings pages private. Each is a canvas page with
+		-- its own settings list, recognised here by TomTom's page fields.
+		local panel = _G.SettingsPanel
+		if panel then
+			skin:Hook(panel, "DisplayLayout", function(_, layout)
+				local page = layout and type(layout.GetFrame) == "function" and layout:GetFrame()
+				if page and page.List and page.onPage and page.Redisplay then
+					ns.StyleSettingsList(skin, page.List)
+				end
+			end)
+		end
 	end,
 })

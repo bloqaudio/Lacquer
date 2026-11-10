@@ -307,6 +307,14 @@ function ops.Slider(slider)
 	end
 end
 
+-- MinimalSliderWithSteppers: the slider inside, with Blizzard's arrows kept.
+function ops.StepSlider(frame)
+	ns.Paint.Slider(frame.Slider)
+end
+
+-- No arrow art of Lacquer's own yet, so arrow buttons keep Blizzard's.
+function ops.ArrowButton() end
+
 function ops.Icon(texture, parent)
 	texture:SetTexCoord(unpack(ICON_CROP))
 	if parent then
