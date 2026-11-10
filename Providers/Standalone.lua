@@ -236,9 +236,10 @@ function ops.CheckBox(check, box)
 	hover(check, plateFor(check, "panel", { inset, -inset, -inset, inset }, box))
 end
 
--- A colour swatch button: its own frame art goes, the colour stays, and a
--- thin border goes around the swatch.
+-- A colour swatch button: its own frame art and any rounding mask go, the
+-- colour stays, and a thin border goes around the swatch.
 function ops.Swatch(button, swatch)
+	ns.Unmask(swatch)
 	local keep = { [swatch] = true }
 	fadeTextures(button, keep)
 	fadeButtonTextures(button, keep)
