@@ -3,4 +3,7 @@
 	<Script file="BugSack.lua"/>
 	<Script file="DBM.lua"/>
 	<Script file="DBM-GUI.lua"/>
+	<Script file="Pawn.lua"/>
+	<Script file="Simulationcraft.lua"/>
+	<Script file="TomTom.lua"/>
 </Ui>

@@ -22,12 +22,15 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 | BigWigs | all |
 | BugSack | all |
 | DBM (bars and options window) | all |
+| Pawn | all |
+| Simulationcraft | all |
+| TomTom | all |
 
 For BigWigs bars, choose the **Lacquer** bar style in BigWigs' Bars options. It follows whichever UI Lacquer is matching. BigWigs' own options window is styled with the Ace3 options windows.
 
 DBM bars get a border in your UI's style around the bar and its icons. The bar texture, font, and spark stay as you set them in DBM.
 
-More are on the way: Details!, Simulationcraft, TomTom, Pawn, and Ace3 options windows on every client; Bagnon, Questie, and RareScanner on Forever; AngrierWorldQuests, PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
+More are on the way: Ace3 options windows on every client; Bagnon, Questie, and RareScanner on Forever; AngrierWorldQuests, PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
 
 ## Editions
 
