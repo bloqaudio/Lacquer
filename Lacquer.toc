@@ -9,6 +9,7 @@
 ## X-Category: Interface Enhancements
 ## X-License: MIT
 ## X-Website: https://github.com/bloqaudio/Lacquer
+## X-Curse-Project-ID: 1796823
 
 Libs\Libs.xml
 
