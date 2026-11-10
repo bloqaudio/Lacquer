@@ -37,6 +37,10 @@ DBM bars get a border in your UI's style around the bar and its icons. The bar t
 
 More are on the way: Ace3 options windows on every client; AngrierWorldQuests, PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
 
+### Requests
+
+The list keeps growing, and requests decide what comes next. To ask for an addon, [open an issue](https://github.com/bloqaudio/Lacquer/issues) with its name, where to download it, and which client you play it on. Screenshots of any frames that stand out from the rest of your UI help too.
+
 ## Editions
 
 Lacquer has a TOC for each edition current ElvUI supports: Retail (Midnight), WoW Forever, Mists of Pandaria Classic, Burning Crusade Classic Anniversary, Classic Era, and Titan Reforged. Retail and Forever are tested in-game; the Classic editions are supported on a bug-report basis.
