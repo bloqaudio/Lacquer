@@ -8,6 +8,8 @@ local ops = ElvUI.ops
 
 local E, S
 
+local ICON_CROP = { 0.08, 0.92, 0.08, 0.92 }
+
 local function has(object, method)
 	return object and type(object[method]) == "function"
 end
@@ -101,11 +103,28 @@ local function handler(method, ...)
 	end
 end
 
-ops.Button = handler("HandleButton", true)
+-- Some templates put their three-piece art back after ElvUI clears it, on
+-- hover, click, or selection; zero alpha survives that.
+local THREE_PIECE = { "Left", "Middle", "Right" }
+
+local function hideThreePiece(frame)
+	for _, key in ipairs(THREE_PIECE) do
+		local region = frame[key]
+		if region and region.SetAlpha then
+			region:SetAlpha(0)
+		end
+	end
+end
+
+function ops.Button(button)
+	if not has(S, "HandleButton") then
+		return false
+	end
+	S:HandleButton(button, true)
+	hideThreePiece(button)
+end
+
 ops.CloseButton = handler("HandleCloseButton")
--- Atlas-driven tabs such as MinimalTabTemplate put their art back on hover
--- and selection after ElvUI clears it; zero alpha survives that.
-local TAB_ART = { "Left", "Middle", "Right" }
 
 function ops.Tab(tab)
 	if not has(S, "HandleTab") then
@@ -113,14 +132,32 @@ function ops.Tab(tab)
 	end
 	S:HandleTab(tab)
 	if type(tab.UpdateAtlas) == "function" then
-		for _, key in ipairs(TAB_ART) do
-			if tab[key] then
-				tab[key]:SetAlpha(0)
-			end
+		hideThreePiece(tab)
+	end
+end
+-- box is the visible box of a check button wider than it, such as one that
+-- carries its own label; ElvUI would otherwise fill the whole button.
+local CHECK_TEXTURES = { "GetCheckedTexture", "GetDisabledTexture" }
+
+function ops.CheckBox(check, box)
+	if not has(S, "HandleCheckBox") then
+		return false
+	end
+	S:HandleCheckBox(check)
+	local backdrop = check.backdrop
+	if not (box and backdrop) then
+		return
+	end
+	backdrop:ClearAllPoints()
+	backdrop:SetInside(box, 4, 4)
+	for _, getter in ipairs(CHECK_TEXTURES) do
+		local texture = check[getter] and check[getter](check)
+		if texture then
+			texture:ClearAllPoints()
+			texture:SetInside(backdrop)
 		end
 	end
 end
-ops.CheckBox = handler("HandleCheckBox")
 ops.EditBox = handler("HandleEditBox")
 ops.Slider = handler("HandleSliderFrame")
 ops.StepSlider = handler("HandleStepSlider")
@@ -130,8 +167,34 @@ function ops.ArrowButton(button, direction)
 	end
 	S:HandleNextPrevButton(button, direction)
 end
-ops.ItemButton = handler("HandleItemButton", true)
 ops.StatusBar = handler("HandleStatusBar")
+
+-- Not HandleItemButton: that clears every texture on the button, and item
+-- slots carry overlays their addon keeps using (quest, junk, upgrade, glow).
+-- Only the slot art, the icon's edges, and the quality border change; the
+-- border colour follows the button's IconBorder.
+function ops.ItemButton(button)
+	if not (has(button, "CreateBackdrop") and has(S, "HandleIconBorder")) then
+		return false
+	end
+	local name = button:GetName()
+	local icon = button.icon or button.Icon or (name and _G[name .. "IconTexture"])
+	local normal = button.GetNormalTexture and button:GetNormalTexture()
+	if normal then
+		normal:SetAlpha(0)
+	end
+	button:CreateBackdrop()
+	if has(button, "StyleButton") then
+		button:StyleButton()
+	end
+	if icon then
+		ns.Unmask(icon)
+		ns.KeepCrop(icon, type(E.TexCoords) == "table" and E.TexCoords or ICON_CROP)
+	end
+	if button.IconBorder then
+		S:HandleIconBorder(button.IconBorder, button.backdrop)
+	end
+end
 
 -- Without a width ElvUI resizes the box to its own default, so modern
 -- dropdowns keep the width their addon gave them. Legacy UIDropDownMenu

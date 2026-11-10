@@ -2,7 +2,7 @@
 
 Lacquer skins third-party addons so they match your UI. It is built as a companion to ElvUI, and it also matches EllesmereUI. Without either, it uses its own flat style.
 
-Lacquer is a new, MIT-licensed addon. It replaces AddOnSkins with a smaller, faster design. It shares no code with AddOnSkins.
+Lacquer is a new, MIT-licensed addon inspired by AddOnSkins, with a smaller, faster design.
 
 ## How it matches your UI
 

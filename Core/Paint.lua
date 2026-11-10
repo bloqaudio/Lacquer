@@ -6,7 +6,7 @@ ns.providers = { ns.ElvUIProvider, ns.EllesmereProvider }
 
 local OPERATIONS = {
 	"Window", "Panel", "Inset", "Clear", "Backdrop",
-	"Button", "CloseButton", "Tab", "CheckBox", "EditBox", "Dropdown", "ScrollBar", "Slider", "StepSlider", "ArrowButton",
+	"Button", "CloseButton", "Tab", "CheckBox", "Swatch", "EditBox", "Dropdown", "ScrollBar", "Slider", "StepSlider", "ArrowButton",
 	"Icon", "ItemButton", "StatusBar", "Font",
 }
 
@@ -40,6 +40,35 @@ end
 -- Button. Recognise it by its mixin instead.
 function ns.IsDropdown(frame)
 	return type(frame.SetupMenu) == "function" and type(frame.OpenMenu) == "function"
+end
+
+-- Modern item and action button icons carry a mask that rounds their corners.
+function ns.Unmask(texture)
+	if not texture.GetNumMaskTextures then
+		return
+	end
+	for index = texture:GetNumMaskTextures(), 1, -1 do
+		texture:RemoveMaskTexture(texture:GetMaskTexture(index))
+	end
+end
+
+local crops = setmetatable({}, { __mode = "k" })
+
+local function reapplyCrop(texture)
+	local crop = crops[texture]
+	texture:SetTexCoord(crop[1], crop[2], crop[3], crop[4])
+end
+
+-- A new texture resets the crop on modern clients, and item buttons swap
+-- their icon on every update. crop is a live table, so a suite setting that
+-- changes it in place carries through.
+function ns.KeepCrop(texture, crop)
+	local first = not crops[texture]
+	crops[texture] = crop
+	reapplyCrop(texture)
+	if first then
+		hooksecurefunc(texture, "SetTexture", reapplyCrop)
+	end
 end
 
 local function styleSettingsControl(child)

@@ -219,7 +219,7 @@ function ops.Tab(tab)
 	updateTab(tab)
 end
 
-function ops.CheckBox(check)
+function ops.CheckBox(check, box)
 	local keep = {}
 	local checked = check.GetCheckedTexture and check:GetCheckedTexture()
 	local disabledChecked = check.GetDisabledCheckedTexture and check:GetDisabledCheckedTexture()
@@ -231,8 +231,19 @@ function ops.CheckBox(check)
 	end
 	fadeTextures(check, keep)
 	fadeButtonTextures(check, keep)
-	local inset = math.floor(math.min(check:GetWidth(), check:GetHeight()) * 0.2 + 0.5)
-	hover(check, plateFor(check, "panel", { inset, -inset, -inset, inset }))
+	local area = box or check
+	local inset = math.floor(math.min(area:GetWidth(), area:GetHeight()) * 0.2 + 0.5)
+	hover(check, plateFor(check, "panel", { inset, -inset, -inset, inset }, box))
+end
+
+-- A colour swatch button: its own frame art goes, the colour stays, and a
+-- thin border goes around the swatch.
+function ops.Swatch(button, swatch)
+	local keep = { [swatch] = true }
+	fadeTextures(button, keep)
+	fadeButtonTextures(button, keep)
+	local px = pixel(button)
+	hover(button, plateFor(button, "none", { -px, px, px, -px }, swatch))
 end
 
 function ops.EditBox(editBox, opts)
@@ -343,7 +354,8 @@ function ops.ItemButton(button)
 	fade(normal)
 	fade(button.IconBorder)
 	if icon then
-		icon:SetTexCoord(unpack(ICON_CROP))
+		ns.Unmask(icon)
+		ns.KeepCrop(icon, ICON_CROP)
 	end
 	itemPlates[button] = plateFor(button, "panel")
 	if not qualityHook and SetItemButtonQuality then

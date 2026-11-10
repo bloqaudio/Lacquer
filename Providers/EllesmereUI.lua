@@ -56,7 +56,16 @@ ops.Panel = primitive("Panel")
 ops.Inset = primitive("Inset")
 ops.CloseButton = primitive("CloseButton")
 ops.Tab = primitive("Tab")
-ops.CheckBox = primitive("Checkbox")
+local checkbox = primitive("Checkbox")
+
+-- The published Checkbox primitive has no way to name a box inside a wider
+-- button, so those fall back to the standalone style.
+function ops.CheckBox(check, box)
+	if box then
+		return false
+	end
+	return checkbox(check)
+end
 ops.EditBox = primitive("EditBox")
 ops.Dropdown = primitive("Dropdown")
 ops.ScrollBar = primitive("ScrollBar")
