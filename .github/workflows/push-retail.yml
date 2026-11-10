@@ -1,0 +1,23 @@
+name: Retail Push Checks
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Lua 5.1
+        uses: leafo/gh-actions-lua@v13
+        with:
+          luaVersion: "5.1"
+
+      - name: Lua syntax check (all files)
+        run: |
+          set -euo pipefail
+          ./.github/scripts/lua-syntax-check.sh

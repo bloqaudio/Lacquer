@@ -1,0 +1,57 @@
+# Lacquer
+
+Lacquer skins third-party addons so they match your UI. It is built as a companion to ElvUI, and it also matches EllesmereUI. Without either, it uses its own flat style.
+
+Lacquer is a new, MIT-licensed addon. It replaces AddOnSkins with a smaller, faster design. It shares no code with AddOnSkins.
+
+## How it matches your UI
+
+Lacquer doesn't imitate your UI's look; it asks your UI to paint the frames:
+
+- **ElvUI:** frames go through ElvUI's own skinning tools. They come out identical to ElvUI's built-in skins and follow your ElvUI media settings.
+- **EllesmereUI:** frames go through EllesmereUI's published Skinning API, so accent and theme changes apply live. EllesmereUI's per-addon skinning toggle covers Lacquer.
+- **Neither:** Lacquer's own style, with colours, font, and bar texture under `/lacquer`.
+- **Tukui:** support is planned. Until then Tukui users get Lacquer's own style.
+
+If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you once, because the two suites can fight over the same frames.
+
+## Skins
+
+| Addon | Clients |
+|---|---|
+| BigWigs | all |
+| BugSack | all |
+| DBM (bars and options window) | all |
+
+For BigWigs bars, choose the **Lacquer** bar style in BigWigs' Bars options. It follows whichever UI Lacquer is matching. BigWigs' own options window is styled with the Ace3 options windows.
+
+DBM bars get a border in your UI's style around the bar and its icons. The bar texture, font, and spark stay as you set them in DBM.
+
+More are on the way: Details!, Simulationcraft, TomTom, Pawn, and Ace3 options windows on every client; Bagnon, Questie, and RareScanner on Forever; AngrierWorldQuests, PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
+
+## Editions
+
+Lacquer has a TOC for each edition current ElvUI supports: Retail (Midnight), WoW Forever, Mists of Pandaria Classic, Burning Crusade Classic Anniversary, Classic Era, and Titan Reforged. Retail and Forever are tested in-game; the Classic editions are supported on a bug-report basis.
+
+## Coming from AddOnSkins
+
+When AddOnSkins is enabled, Lacquer offers once to disable it and reload. If you keep both, some addons may be skinned twice. `/lacquer addonskins` brings the offer back.
+
+## Commands
+
+- `/lacquer`: open the options
+- `/lacquer status`: show which UI Lacquer is matching
+- `/lacquer errors`: list skins that hit an error this session
+- `/lacquer addonskins`: offer to disable AddOnSkins again
+
+A skin that errors turns itself off for the session and never takes other skins down with it. The full error goes to your error handler, such as BugSack.
+
+## Contributing
+
+Lacquer's code must stay independent. Write skins from Blizzard's UI source (github.com/Gethe/wow-ui-source), the target addon's own frames and APIs, and in-game `/fstack` inspection. Don't copy code from AddOnSkins, ElvUI, EllesmereUI, or other all-rights-reserved addons. Calling their public APIs is fine.
+
+A skin is one file in `Skins/` that calls `ns.RegisterSkin` and styles frames only through the paint operations in `Core/Paint.lua`, so it works under every provider. See `Skins/BugSack.lua` for an example.
+
+## License
+
+Lacquer is released under the MIT License. Bundled libraries keep their own licenses: Ace3 (`Libs/Ace3-LICENSE.txt`) and LibSharedMedia-3.0 (LGPL 2.1, `Libs/LibSharedMedia-3.0/LICENSE.txt`).

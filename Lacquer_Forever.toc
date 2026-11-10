@@ -1,0 +1,24 @@
+## Interface: 16001
+## Title: Lacquer
+## Notes: Skins third-party addons to match ElvUI or EllesmereUI.
+## Author: bloqaudio
+## Version: 0.1.0
+## SavedVariables: LacquerDB
+## OptionalDeps: ElvUI, Tukui, EllesmereUI
+## X-Category: Interface Enhancements
+## X-License: MIT
+## X-Website: https://github.com/bloqaudio/Lacquer
+
+Libs\Libs.xml
+
+Core\Init.lua
+Core\Locale.lua
+Providers\Standalone.lua
+Providers\ElvUI.lua
+Providers\EllesmereUI.lua
+Core\Paint.lua
+Core\Registry.lua
+Core\Notices.lua
+Core\Options.lua
+
+Skins\Skins.xml

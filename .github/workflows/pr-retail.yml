@@ -1,0 +1,62 @@
+name: Retail PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - ready_for_review
+
+jobs:
+  checks:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Validate PR title format
+        run: |
+          set -euo pipefail
+          TITLE="$(jq -r '.pull_request.title' "${GITHUB_EVENT_PATH}")"
+          REGEX='^(fix|feat|chore|docs|refactor|test|build|ci|perf|style)(\([a-z0-9._/-]+\))?: .+'
+
+          if [[ ! "${TITLE}" =~ ${REGEX} ]]; then
+            echo "PR title does not match conventional format."
+            echo "Expected: type(scope): summary"
+            echo "Allowed types: fix, feat, chore, docs, refactor, test, build, ci, perf, style"
+            echo "Current title: ${TITLE}"
+            exit 1
+          fi
+
+      - name: Set up Lua 5.1
+        uses: leafo/gh-actions-lua@v13
+        with:
+          luaVersion: "5.1"
+
+      - name: Collect changed Lua files
+        run: |
+          set -euo pipefail
+          git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" -- '*.lua' \
+            | while IFS= read -r file; do
+                if [[ -f "${file}" ]]; then echo "${file}"; fi
+              done > /tmp/changed_lua_files.txt
+          echo "Changed Lua files:"
+          cat /tmp/changed_lua_files.txt || true
+
+      - name: Lua syntax check
+        run: |
+          set -euo pipefail
+          if [[ ! -s /tmp/changed_lua_files.txt ]]; then
+            echo "No Lua files changed."
+            exit 0
+          fi
+
+          mapfile -t lua_files < /tmp/changed_lua_files.txt
+          ./.github/scripts/lua-syntax-check.sh "${lua_files[@]}"

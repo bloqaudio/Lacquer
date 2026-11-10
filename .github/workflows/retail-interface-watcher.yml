@@ -1,0 +1,69 @@
+name: Retail Interface Watcher
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-interface:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - flavor: retail
+            toc: Lacquer.toc
+            version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/live/version.txt
+          - flavor: forever
+            toc: Lacquer_Forever.toc
+            version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/forever/version.txt
+          - flavor: classic-era
+            toc: Lacquer_Vanilla.toc
+            version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/classic_era/version.txt
+          - flavor: tbc-anniversary
+            toc: Lacquer_TBC.toc
+            version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/classic_anniversary/version.txt
+          - flavor: mists
+            toc: Lacquer_Mists.toc
+            version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/classic/version.txt
+          - flavor: titan
+            toc: Lacquer_Wrath.toc
+            version_url: https://raw.githubusercontent.com/Gethe/wow-ui-source/classic_titan/version.txt
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Check latest ${{ matrix.flavor }} interface
+        id: interface
+        env:
+          TOC_FILE: ${{ matrix.toc }}
+          WOW_UI_VERSION_URL: ${{ matrix.version_url }}
+        run: ./.github/scripts/update-retail-interface.sh
+
+      - name: Create or update PR
+        if: steps.interface.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: chore/${{ matrix.flavor }}-interface-bump
+          delete-branch: false
+          commit-message: "chore(toc): bump ${{ matrix.flavor }} interface to ${{ steps.interface.outputs.new_interface }}"
+          title: "chore(toc): bump ${{ matrix.flavor }} interface to ${{ steps.interface.outputs.new_interface }}"
+          body: |
+            ## Summary
+            Automated ${{ matrix.flavor }} TOC interface bump.
+
+            ## Details
+            - Source version: `${{ steps.interface.outputs.version_raw }}`
+            - Previous interface: `${{ steps.interface.outputs.current_interface }}`
+            - New interface: `${{ steps.interface.outputs.new_interface }}`
+            - Updated file: `${{ matrix.toc }}`
+
+            This PR was created by the Retail Interface Watcher workflow.
+          labels: |
+            automation
+            toc
