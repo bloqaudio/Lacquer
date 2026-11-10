@@ -10,6 +10,7 @@
 ## X-License: MIT
 ## X-Website: https://github.com/bloqaudio/Lacquer
 ## X-Curse-Project-ID: 1796823
+## X-Wago-ID: rNkgk8Na
 
 Libs\Libs.xml
 
