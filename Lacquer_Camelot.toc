@@ -1,6 +1,7 @@
 ## Interface: 16001
 ## Title: Lacquer
 ## Notes: Skins third-party addons to match ElvUI or EllesmereUI.
+## IconTexture: Interface\AddOns\Lacquer\Media\Icon
 ## Author: bloqaudio
 ## Version: @project-version@
 ## SavedVariables: LacquerDB
