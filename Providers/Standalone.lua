@@ -328,7 +328,7 @@ end
 function ops.ArrowButton() end
 
 function ops.Icon(texture, parent)
-	texture:SetTexCoord(unpack(ICON_CROP))
+	ns.KeepCrop(texture, ICON_CROP)
 	if parent then
 		local px = pixel(parent)
 		plateFor(parent, "none", { -px, px, px, -px }, texture)

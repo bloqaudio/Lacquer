@@ -116,12 +116,49 @@ local function hideThreePiece(frame)
 	end
 end
 
-function ops.Button(button)
+-- Blizzard's three-slice buttons redraw their art into Left, Center, and
+-- Right on every show, click, and enable, and a backdrop takes an existing
+-- Center as its own fill. They get hidden stand-ins to draw into.
+local THREE_SLICE = { "Left", "Center", "Right" }
+
+local function detachThreeSlice(button)
+	if type(button.GetCenterAtlasName) ~= "function" then
+		return
+	end
+	for _, key in ipairs(THREE_SLICE) do
+		local art = button[key]
+		if art then
+			art:SetAlpha(0)
+			local standIn = button:CreateTexture()
+			standIn:Hide()
+			button[key] = standIn
+		end
+	end
+end
+
+-- keep names textures that are content rather than button art, such as an
+-- arrow glyph; HandleButton clears every texture, so they are put back.
+function ops.Button(button, opts)
 	if not has(S, "HandleButton") then
 		return false
 	end
+	local kept = {}
+	for _, key in ipairs(opts and opts.keep or {}) do
+		local region = button[key]
+		if region and region.GetAtlas then
+			kept[region] = { atlas = region:GetAtlas(), file = region:GetTexture() }
+		end
+	end
+	detachThreeSlice(button)
 	S:HandleButton(button, true)
 	hideThreePiece(button)
+	for region, art in pairs(kept) do
+		if art.atlas then
+			region:SetAtlas(art.atlas)
+		elseif art.file then
+			region:SetTexture(art.file)
+		end
+	end
 end
 
 ops.CloseButton = handler("HandleCloseButton")
@@ -223,6 +260,7 @@ function ops.Icon(texture, parent)
 		return false
 	end
 	S:HandleIcon(texture, parent ~= nil)
+	ns.KeepCrop(texture, type(E.TexCoords) == "table" and E.TexCoords or ICON_CROP)
 end
 
 function ops.Font(fontString)
