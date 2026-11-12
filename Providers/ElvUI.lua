@@ -286,7 +286,7 @@ end
 
 -- ElvUI draws a legacy bar's thumb full width at full colour. These match
 -- its modern bars instead: a narrower thumb, dim until the bar is hovered.
-local LEGACY_THUMB_INSET = 4
+local LEGACY_THUMB_INSET = 5
 local THUMB_EVENTS = { "Enable", "Disable", "SetEnabled", "SetMinMaxValues" }
 
 local function matchModernThumb(scrollBar)

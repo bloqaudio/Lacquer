@@ -61,6 +61,22 @@ local function frameIcon(P, owner, icon, quality)
 	return frame
 end
 
+-- Rivals and the Pet Journal both cover the Collections window, so the
+-- Rivals scroll bar takes the place of the Pet Journal's track, wherever
+-- the suite has put it.
+local function alignScrollBar(journal)
+	local page = _G.PetJournal
+	local track = page and page.ScrollBar and page.ScrollBar.Track
+	local bar = journal.List.scrollBar
+	if not (track and track:GetLeft() and page:GetLeft()) then
+		return
+	end
+	local x = track:GetLeft() - page:GetLeft() + (track:GetWidth() - bar:GetWidth()) / 2
+	bar:ClearAllPoints()
+	bar:SetPoint("TOPLEFT", journal, "TOPLEFT", x, track:GetTop() - page:GetTop())
+	bar:SetPoint("BOTTOMLEFT", journal, "BOTTOMLEFT", x, track:GetBottom() - page:GetBottom())
+end
+
 local function showContent(slot, pet)
 	local alpha = pet and 1 or 0
 	if iconFrames[slot] then
@@ -145,6 +161,7 @@ ns.RegisterSkin({
 			journal.PortraitContainer:SetAlpha(0)
 			journal:HookScript("OnShow", function()
 				skin:Call(coverCollections, true)
+				skin:Call(alignScrollBar, journal)
 			end)
 			journal:HookScript("OnHide", function()
 				skin:Call(coverCollections, false)
@@ -161,6 +178,7 @@ ns.RegisterSkin({
 			P.Inset(journal.Map.BorderFrame)
 			P.EditBox(journal.SearchBox)
 			P.ScrollBar(journal.List.scrollBar)
+			alignScrollBar(journal)
 			P.Button(journal.History.LoadButton)
 			for i = 1, 4 do
 				P.ItemButton(journal.Card[i])
