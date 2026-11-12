@@ -417,11 +417,13 @@ function ops.StatusBar(bar)
 	plateFor(bar, "panel", { -px, px, px, -px })
 end
 
+-- Outlines carry over; MONOCHROME doesn't, since it unsmooths a theme font.
 function ops.Font(fontString)
 	local _, size, flags = fontString:GetFont()
 	local font = ns.Theme().font
 	if font then
-		fontString:SetFont(font, size or 12, flags or "")
+		flags = (flags or ""):gsub("MONOCHROME", ""):gsub("^,+", ""):gsub(",+$", ""):gsub(",,+", ",")
+		fontString:SetFont(font, size or 12, flags)
 		fonts[fontString] = true
 	end
 end

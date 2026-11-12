@@ -30,6 +30,7 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 | Pawn | all |
 | PetTracker (Rivals journal, journal tabs, and battle pet switcher) | all |
 | Questie (tracker and options) | all |
+| RaidAchievement (main window and module panels) | Retail |
 | RareScanner (rare-found button and Explorer) | all |
 | Simulationcraft | all |
 | TomTom | all |

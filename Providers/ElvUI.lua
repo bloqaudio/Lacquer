@@ -288,17 +288,25 @@ function ops.IconFrame(frame, border)
 	end
 end
 
--- Without a width ElvUI resizes the box to its own default, so modern
--- dropdowns keep the width their addon gave them. Legacy UIDropDownMenu
--- frames take ElvUI's separate legacy path.
+-- Without a width ElvUI resizes the box to its own default, so dropdowns
+-- keep the width their addon gave them. Legacy UIDropDownMenu frames take
+-- ElvUI's separate legacy path.
 function ops.Dropdown(dropdown)
 	if not has(S, "HandleDropDownBox") then
 		return false
 	end
 	if ns.IsDropdown(dropdown) then
 		S:HandleDropDownBox(dropdown, dropdown:GetWidth())
-	else
-		S:HandleDropDownBox(dropdown, nil, nil, true)
+		return
+	end
+	S:HandleDropDownBox(dropdown, dropdown:GetWidth(), nil, true)
+	-- UIDropDownMenu_SetButtonWidth widens the arrow button, which Blizzard's
+	-- art hides but ElvUI's arrow stretches across. It stays square.
+	local name = dropdown:GetName()
+	local button = dropdown.Button or (name and _G[name .. "Button"])
+	if button then
+		button:SetWidth(button:GetHeight())
+		button.SetWidth = nop
 	end
 end
 

@@ -11,6 +11,7 @@
 	<Script file="Pawn.lua"/>
 	<Script file="PetTracker.lua"/>
 	<Script file="Questie.lua"/>
+	<Script file="RaidAchievement.lua"/>
 	<Script file="RareScanner.lua"/>
 	<Script file="Simulationcraft.lua"/>
 	<Script file="TomTom.lua"/>
