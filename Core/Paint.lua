@@ -71,7 +71,8 @@ function ns.KeepCrop(texture, crop)
 	end
 end
 
-local function styleSettingsControl(child)
+-- A ns.Walk callback for the controls Blizzard's settings templates build.
+function ns.StyleSettingsControl(child)
 	local parent = child:GetParent()
 	if ns.IsDropdown(child) then
 		ns.Paint.Dropdown(child)
@@ -122,7 +123,7 @@ function ns.StyleSettingsList(skin, list)
 	ns.Paint.ScrollBar(list.ScrollBar)
 	ns.Paint.Button(list.Header and list.Header.DefaultsButton)
 	local function styleRow(row)
-		skin:Call(ns.Walk, row, styleSettingsControl)
+		skin:Call(ns.Walk, row, ns.StyleSettingsControl)
 	end
 	list.ScrollBox:ForEachFrame(styleRow)
 	list.ScrollBox:RegisterCallback(ScrollBoxListMixin.Event.OnInitializedFrame, function(_, row)
