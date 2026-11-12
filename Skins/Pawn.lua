@@ -24,8 +24,9 @@ ns.RegisterSkin({
 			if tabs[child] then
 				return
 			elseif child:IsObjectType("CheckButton") then
-				-- Lacquer has no radio style, and a check box style would square them.
-				if not (name and name:find("Radio$")) then
+				if name and name:find("Radio$") then
+					P.Radio(child)
+				else
 					P.CheckBox(child)
 				end
 			elseif child:IsObjectType("EditBox") then

@@ -220,6 +220,7 @@ function ops.CheckBox(check, box)
 		end
 	end
 end
+ops.Radio = handler("HandleRadioButton")
 ops.EditBox = handler("HandleEditBox")
 ops.Slider = handler("HandleSliderFrame")
 ops.StepSlider = handler("HandleStepSlider")

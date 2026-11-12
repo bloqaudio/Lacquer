@@ -24,6 +24,7 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 | BetterWardrobe (collection list controls; it styles the rest for ElvUI itself) | Retail |
 | BigWigs | all |
 | BugSack | all |
+| Clique (binding window and spell picker) | all |
 | DBM (bars and options window) | all |
 | Pawn | all |
 | PetTracker (Rivals journal, journal tabs, and battle pet switcher) | all |

@@ -223,6 +223,9 @@ end
 -- side tab keeps the same art to match them.
 function ops.SideTab() end
 
+-- Lacquer's own style has no round control, so radios keep Blizzard's art.
+function ops.Radio() end
+
 function ops.CheckBox(check, box)
 	local keep = {}
 	local checked = check.GetCheckedTexture and check:GetCheckedTexture()

@@ -6,7 +6,7 @@ ns.providers = { ns.ElvUIProvider, ns.EllesmereProvider }
 
 local OPERATIONS = {
 	"Window", "Panel", "Inset", "Clear", "Backdrop",
-	"Button", "CloseButton", "Tab", "SideTab", "CheckBox", "Swatch", "EditBox", "Dropdown", "ScrollBar", "Slider", "StepSlider", "ArrowButton",
+	"Button", "CloseButton", "Tab", "SideTab", "CheckBox", "Radio", "Swatch", "EditBox", "Dropdown", "ScrollBar", "Slider", "StepSlider", "ArrowButton",
 	"Icon", "IconFrame", "ItemButton", "Row", "StatusBar", "Font",
 }
 
