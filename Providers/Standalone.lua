@@ -219,6 +219,10 @@ function ops.Tab(tab)
 	updateTab(tab)
 end
 
+-- The standalone style leaves Blizzard's own side tabs alone, so an addon's
+-- side tab keeps the same art to match them.
+function ops.SideTab() end
+
 function ops.CheckBox(check, box)
 	local keep = {}
 	local checked = check.GetCheckedTexture and check:GetCheckedTexture()

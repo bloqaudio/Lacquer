@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="AngrierWorldQuests.lua"/>
 	<Script file="Bagnon.lua"/>
 	<Script file="BigWigs.lua"/>
 	<Script file="BugSack.lua"/>

@@ -19,6 +19,7 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 
 | Addon | Clients |
 |---|---|
+| Angrier World Quests (quest log tab, window, and options) | Retail |
 | Bagnon (bags, item slots, and options) | all |
 | BigWigs | all |
 | BugSack | all |
@@ -35,7 +36,7 @@ For Bagnon windows, choose the **Lacquer** skin in each frame's settings in Bagn
 
 DBM bars get a border in your UI's style around the bar and its icons. The bar texture, font, and spark stay as you set them in DBM.
 
-More are on the way: Ace3 options windows on every client; AngrierWorldQuests, PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
+More are on the way: Ace3 options windows on every client; PetTracker, Krowi's Achievement Filter, and BetterWardrobe on Retail.
 
 ### Requests
 

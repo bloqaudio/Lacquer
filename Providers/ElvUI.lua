@@ -172,6 +172,31 @@ function ops.Tab(tab)
 		hideThreePiece(tab)
 	end
 end
+-- A tall LargeSideTabButtonTemplate tab, as on the quest log. like is one of
+-- Blizzard's own side tabs, whose size this tab takes so the column lines up.
+local SIDE_TAB_ART = { "Background", "SelectedTexture" }
+
+function ops.SideTab(tab, like)
+	if not has(tab, "CreateBackdrop") then
+		return false
+	end
+	for _, key in ipairs(SIDE_TAB_ART) do
+		if tab[key] then
+			tab[key]:SetAlpha(0)
+		end
+	end
+	if like then
+		tab:SetSize(like:GetSize())
+	end
+	tab:CreateBackdrop()
+	local highlight = tab.HighlightTexture
+	if highlight and tab.backdrop then
+		highlight:SetColorTexture(1, 1, 1, 0.25)
+		highlight:ClearAllPoints()
+		highlight:SetInside(tab.backdrop)
+	end
+end
+
 -- box is the visible box of a check button wider than it, such as one that
 -- carries its own label; ElvUI would otherwise fill the whole button.
 local CHECK_TEXTURES = { "GetCheckedTexture", "GetDisabledTexture" }
