@@ -20,6 +20,7 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 | Addon | Clients |
 |---|---|
 | Angrier World Quests (quest log tab, window, and options) | Retail |
+| Atlas and AtlasQuest (map windows and quest panel) | all |
 | Bagnon (bags, item slots, and options) | all |
 | BetterWardrobe (collection list controls; it styles the rest for ElvUI itself) | Retail |
 | BigWigs | all |

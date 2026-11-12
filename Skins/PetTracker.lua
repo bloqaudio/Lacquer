@@ -50,17 +50,6 @@ end
 
 local iconFrames = setmetatable({}, { __mode = "k" })
 
--- A square, suite-styled frame around an icon or portrait drawn by owner,
--- taking its colour from PetTracker's rounded quality border. It sits a
--- level below owner so the icon or model still draws on top.
-local function frameIcon(P, owner, icon, quality)
-	local frame = CreateFrame("Frame", nil, owner)
-	frame:SetFrameLevel(math.max(owner:GetFrameLevel() - 1, 0))
-	frame:SetAllPoints(icon)
-	P.IconFrame(frame, quality)
-	return frame
-end
-
 -- Rivals and the Pet Journal both cover the Collections window, so the
 -- Rivals scroll bar takes the place of the Pet Journal's track, wherever
 -- the suite has put it.
@@ -102,7 +91,7 @@ local function styleSlot(skin, P, slot)
 		end
 	end
 	P.Icon(slot.Icon)
-	iconFrames[slot] = frameIcon(P, slot, slot.Icon, slot.Quality)
+	iconFrames[slot] = ns.FrameIcon(slot, slot.Icon, slot.Quality)
 	-- PetTracker marks an empty slot with one baked image of Blizzard's
 	-- locked-slot art. A padlock alone takes its place.
 	local empty = slot.IsEmpty
@@ -186,7 +175,7 @@ ns.RegisterSkin({
 			for _, row in ipairs(journal.List.buttons or {}) do
 				row.background:SetAlpha(0)
 				row.model.levelRing:SetAlpha(0)
-				frameIcon(P, row, row.model, row.model.quality)
+				ns.FrameIcon(row, row.model, row.model.quality)
 				P.Row(row, row.selectedTexture)
 			end
 			-- Character-sheet style tabs: the art goes, the dimming PetTracker

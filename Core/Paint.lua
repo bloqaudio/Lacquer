@@ -97,6 +97,18 @@ local function styleSettingsControl(child)
 	end
 end
 
+-- A square, suite-styled frame around an icon or portrait drawn by owner,
+-- taking its colour from the owner's quality border art, such as Blizzard's
+-- round-cornered WhiteIconFrame. It sits a level below owner so the icon or
+-- model still draws on top.
+function ns.FrameIcon(owner, icon, quality)
+	local frame = CreateFrame("Frame", nil, owner)
+	frame:SetFrameLevel(math.max(owner:GetFrameLevel() - 1, 0))
+	frame:SetAllPoints(icon)
+	ns.Paint.IconFrame(frame, quality)
+	return frame
+end
+
 local settingsLists = setmetatable({}, { __mode = "k" })
 
 -- For an addon's own copy of Blizzard's SettingsListTemplate on a canvas

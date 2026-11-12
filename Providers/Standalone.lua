@@ -80,12 +80,14 @@ local function fade(object)
 	end
 end
 
+-- keys are keys on the frame, or the regions themselves.
 local function keepSet(frame, keys, extra)
 	local set = extra or {}
 	if keys then
 		for _, key in ipairs(keys) do
-			if frame[key] then
-				set[frame[key]] = true
+			local region = type(key) == "table" and key or frame[key]
+			if region then
+				set[region] = true
 			end
 		end
 	end

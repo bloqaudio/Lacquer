@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="AngrierWorldQuests.lua"/>
+	<Script file="Atlas.lua"/>
 	<Script file="Bagnon.lua"/>
 	<Script file="BetterWardrobe.lua"/>
 	<Script file="BigWigs.lua"/>

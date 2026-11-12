@@ -47,24 +47,51 @@ function ElvUI.theme()
 	}
 end
 
-local function template(frame, kind)
+-- opts.keep names art that stripping must spare: keys on the frame, or the
+-- textures themselves. ElvUI clears every texture, so kept art is put back.
+local function rememberArt(frame, opts)
+	local kept = {}
+	for _, entry in ipairs(opts and opts.keep or {}) do
+		local region = type(entry) == "table" and entry or frame[entry]
+		if region and region.GetAtlas then
+			kept[region] = { atlas = region:GetAtlas(), file = region:GetTexture() }
+		end
+	end
+	return kept
+end
+
+local function restoreArt(kept)
+	for region, art in pairs(kept) do
+		if art.atlas then
+			region:SetAtlas(art.atlas)
+		elseif art.file then
+			region:SetTexture(art.file)
+		end
+	end
+end
+
+local function template(frame, kind, opts)
 	if not (has(frame, "StripTextures") and has(frame, "SetTemplate")) then
 		return false
 	end
+	local kept = rememberArt(frame, opts)
 	frame:StripTextures()
 	frame:SetTemplate(kind)
+	restoreArt(kept)
 end
 
-function ops.Window(frame)
+function ops.Window(frame, opts)
 	if (frame.NineSlice or frame.PortraitContainer) and has(S, "HandlePortraitFrame") then
+		local kept = rememberArt(frame, opts)
 		S:HandlePortraitFrame(frame)
+		restoreArt(kept)
 		return
 	end
-	return template(frame, "Transparent")
+	return template(frame, "Transparent", opts)
 end
 
-function ops.Panel(frame)
-	return template(frame)
+function ops.Panel(frame, opts)
+	return template(frame, nil, opts)
 end
 
 function ops.Inset(frame)
@@ -85,11 +112,13 @@ function ops.Backdrop(frame)
 	frame:CreateBackdrop("Transparent")
 end
 
-function ops.Clear(frame)
+function ops.Clear(frame, opts)
 	if not has(frame, "StripTextures") then
 		return false
 	end
+	local kept = rememberArt(frame, opts)
 	frame:StripTextures()
+	restoreArt(kept)
 end
 
 local function handler(method, ...)
@@ -142,23 +171,11 @@ function ops.Button(button, opts)
 	if not has(S, "HandleButton") then
 		return false
 	end
-	local kept = {}
-	for _, key in ipairs(opts and opts.keep or {}) do
-		local region = button[key]
-		if region and region.GetAtlas then
-			kept[region] = { atlas = region:GetAtlas(), file = region:GetTexture() }
-		end
-	end
+	local kept = rememberArt(button, opts)
 	detachThreeSlice(button)
 	S:HandleButton(button, true)
 	hideThreePiece(button)
-	for region, art in pairs(kept) do
-		if art.atlas then
-			region:SetAtlas(art.atlas)
-		elseif art.file then
-			region:SetTexture(art.file)
-		end
-	end
+	restoreArt(kept)
 end
 
 ops.CloseButton = handler("HandleCloseButton")
