@@ -13,6 +13,8 @@
 	<Script file="Questie.lua"/>
 	<Script file="RaidAchievement.lua"/>
 	<Script file="RareScanner.lua"/>
+	<Script file="Rarity.lua"/>
 	<Script file="Simulationcraft.lua"/>
+	<Script file="TomCats.lua"/>
 	<Script file="TomTom.lua"/>
 </Ui>
