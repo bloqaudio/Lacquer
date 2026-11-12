@@ -342,6 +342,26 @@ end
 local itemPlates = setmetatable({}, { __mode = "k" })
 local qualityHook
 
+local MARKER_EVENTS = { "Show", "Hide", "SetShown" }
+
+-- A list row; its selection art gives way to an accent border. The plate
+-- stays inside the row, since a scrolling list clips its outer rows' edges.
+function ops.Row(row, marker)
+	local plate = plateFor(row, "backdrop")
+	if not marker then
+		return
+	end
+	marker:SetAlpha(0)
+	local function update()
+		plate.selected = marker:IsShown()
+		paint(plate)
+	end
+	for _, method in ipairs(MARKER_EVENTS) do
+		hooksecurefunc(marker, method, update)
+	end
+	update()
+end
+
 local function onQuality(button, quality)
 	local plate = itemPlates[button]
 	if not plate then
@@ -367,6 +387,20 @@ function ops.ItemButton(button)
 		qualityHook = true
 		hooksecurefunc("SetItemButtonQuality", onQuality)
 	end
+end
+
+function ops.IconFrame(frame, border)
+	local plate = plateFor(frame, "panel")
+	if not border then
+		return
+	end
+	local function recolor(_, r, g, b)
+		plate.quality = r and { r = r, g = g, b = b } or nil
+		paint(plate)
+	end
+	recolor(nil, border:GetVertexColor())
+	fade(border)
+	hooksecurefunc(border, "SetVertexColor", recolor)
 end
 
 function ops.StatusBar(bar)

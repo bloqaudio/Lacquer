@@ -6,6 +6,7 @@
 	<Script file="DBM.lua"/>
 	<Script file="DBM-GUI.lua"/>
 	<Script file="Pawn.lua"/>
+	<Script file="PetTracker.lua"/>
 	<Script file="Questie.lua"/>
 	<Script file="RareScanner.lua"/>
 	<Script file="Simulationcraft.lua"/>

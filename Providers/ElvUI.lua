@@ -258,6 +258,18 @@ function ops.ItemButton(button)
 	end
 end
 
+-- frame covers an icon or portrait drawn by its parent; border is the
+-- parent's quality border texture, whose colour moves to the backdrop.
+function ops.IconFrame(frame, border)
+	if not (has(frame, "CreateBackdrop") and has(S, "HandleIconBorder")) then
+		return false
+	end
+	frame:CreateBackdrop()
+	if border and frame.backdrop then
+		S:HandleIconBorder(border, frame.backdrop)
+	end
+end
+
 -- Without a width ElvUI resizes the box to its own default, so modern
 -- dropdowns keep the width their addon gave them. Legacy UIDropDownMenu
 -- frames take ElvUI's separate legacy path.
@@ -272,12 +284,87 @@ function ops.Dropdown(dropdown)
 	end
 end
 
+-- ElvUI draws a legacy bar's thumb full width at full colour. These match
+-- its modern bars instead: a narrower thumb, dim until the bar is hovered.
+local LEGACY_THUMB_INSET = 4
+local THUMB_EVENTS = { "Enable", "Disable", "SetEnabled", "SetMinMaxValues" }
+
+local function matchModernThumb(scrollBar)
+	local backdrop = scrollBar.Thumb and scrollBar.Thumb.backdrop
+	if not (backdrop and type(E.media.rgbvaluecolor) == "table") then
+		return
+	end
+	local function paint()
+		local low, high = scrollBar:GetMinMaxValues()
+		-- ElvUI greys out a bar with nothing to scroll; that stays.
+		if not (scrollBar:IsEnabled() and high > low) then
+			return
+		end
+		local r, g, b = unpack(E.media.rgbvaluecolor)
+		backdrop:SetBackdropColor(r, g, b, scrollBar:IsMouseOver() and 1 or 0.25)
+	end
+	for _, method in ipairs(THUMB_EVENTS) do
+		hooksecurefunc(scrollBar, method, paint)
+	end
+	scrollBar:HookScript("OnEnter", paint)
+	scrollBar:HookScript("OnLeave", paint)
+	paint()
+end
+
 function ops.ScrollBar(scrollBar)
-	local method = scrollBar.Track and "HandleTrimScrollBar" or "HandleScrollBar"
-	if not has(S, method) then
+	if scrollBar.Track then
+		if not has(S, "HandleTrimScrollBar") then
+			return false
+		end
+		S:HandleTrimScrollBar(scrollBar)
+		return
+	end
+	if not has(S, "HandleScrollBar") then
 		return false
 	end
-	S[method](S, scrollBar)
+	S:HandleScrollBar(scrollBar, nil, LEGACY_THUMB_INSET)
+	-- Modern bars have no track behind the thumb.
+	if scrollBar.backdrop then
+		scrollBar.backdrop:SetAlpha(0)
+	end
+	matchModernThumb(scrollBar)
+end
+
+-- A list row. marker is the row's own selection art; it gives way to a gold
+-- border that follows whether the marker is shown. The border sits inside
+-- the row, since a scrolling list clips the edges of its outer rows.
+local SELECTED = { r = 1, g = 0.8, b = 0.1 }
+local MARKER_EVENTS = { "Show", "Hide", "SetShown" }
+
+function ops.Row(row, marker)
+	if not has(row, "CreateBackdrop") then
+		return false
+	end
+	row:CreateBackdrop("Transparent")
+	local backdrop = row.backdrop
+	if not backdrop then
+		return
+	end
+	backdrop:ClearAllPoints()
+	if has(backdrop, "SetInside") then
+		backdrop:SetInside(row)
+	else
+		backdrop:SetAllPoints(row)
+	end
+	if not marker then
+		return
+	end
+	marker:SetAlpha(0)
+	local function update()
+		local edge = marker:IsShown() and SELECTED or color(E.media.bordercolor)
+		if edge then
+			backdrop:SetBackdropBorderColor(edge.r, edge.g, edge.b)
+		end
+	end
+	for _, method in ipairs(MARKER_EVENTS) do
+		hooksecurefunc(marker, method, update)
+	end
+	update()
 end
 
 function ops.Icon(texture, parent)
