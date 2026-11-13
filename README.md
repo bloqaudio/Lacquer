@@ -19,6 +19,7 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 
 | Addon | Clients |
 |---|---|
+| Angleur (configuration window and its popups) | Retail, Forever |
 | Angrier World Quests (quest log tab, window, and options) | Retail |
 | Atlas and AtlasQuest (map windows and quest panel) | all |
 | Bagnon (bags, item slots, and options) | all |
