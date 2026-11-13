@@ -34,6 +34,15 @@ ns.defaults = {
 	},
 }
 
+-- The packager fills in Version; a copy run straight from the repo keeps the token.
+function ns.VersionText()
+	local version = ns.version
+	if not version or version:find("@", 1, true) then
+		return ns.L["development build"]
+	end
+	return version
+end
+
 function ns.Print(...)
 	print("|cff1784d1Lacquer|r:", ...)
 end

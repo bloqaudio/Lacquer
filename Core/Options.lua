@@ -77,6 +77,41 @@ local function skinToggles()
 	return args
 end
 
+local function metadata(field)
+	return C_AddOns.GetAddOnMetadata(addonName, field)
+end
+
+local function line(order, text)
+	return { order = order, type = "description", fontSize = "medium", name = text }
+end
+
+-- An input box so the address can be selected and copied.
+local function link(order, name, url)
+	return {
+		order = order,
+		type = "input",
+		width = "full",
+		name = name,
+		hidden = not url,
+		get = function()
+			return url
+		end,
+		set = nop,
+	}
+end
+
+local function aboutArgs()
+	local website = metadata("X-Website")
+	return {
+		version = line(1, format(L["Version %s"], ns.VersionText())),
+		notes = line(2, metadata("Notes") or ""),
+		author = line(3, format(L["Author: %s"], metadata("Author") or "")),
+		license = line(4, format(L["License: %s"], metadata("X-License") or "")),
+		website = link(5, L["Website"], website),
+		issues = link(6, L["Bug reports and skin requests"], website and website .. "/issues"),
+	}
+end
+
 function ns.SetupOptions()
 	local options = {
 		type = "group",
@@ -135,6 +170,12 @@ function ns.SetupOptions()
 				},
 			},
 			profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(ns.db),
+			about = {
+				order = 5,
+				type = "group",
+				name = L["About"],
+				args = aboutArgs(),
+			},
 		},
 	}
 	options.args.profiles.order = 4

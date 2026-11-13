@@ -62,7 +62,7 @@ When AddOnSkins is enabled, Lacquer offers once to disable it and reload. If you
 ## Commands
 
 - `/lacquer`: open the options
-- `/lacquer status`: show which UI Lacquer is matching
+- `/lacquer status`: show the version and which UI Lacquer is matching
 - `/lacquer errors`: list skins that hit an error this session
 - `/lacquer addonskins`: offer to disable AddOnSkins again
 

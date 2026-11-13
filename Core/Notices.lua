@@ -47,6 +47,7 @@ function ns.ShowAddOnSkinsNotice()
 end
 
 function ns.PrintStatus()
+	ns.Print(format(L["Version %s"], ns.VersionText()))
 	ns.Print(ns.ProviderStatus())
 	if bothSuites() then
 		ns.Print(L["ElvUI and EllesmereUI are both enabled; they can conflict."])
