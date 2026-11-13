@@ -23,19 +23,31 @@ ns.RegisterSkin({
 			end,
 		})
 
-		-- Bag, bank, vault, and guild bank slots all update through the base
-		-- class, so one hook reaches every slot as it is first filled, and the
-		-- bag buttons above them likewise. Updates are constant while bags
-		-- change, so only the first one per button pays for error isolation.
+		-- Only the first sighting of each button pays for error isolation.
+		-- A slot has already set its quality border by then, so it is redrawn
+		-- once for the new style to pick up its colour.
 		local styled = setmetatable({}, { __mode = "k" })
-		for _, class in ipairs({ Bagnon.Item, Bagnon.Bag }) do
-			hooksecurefunc(class, "Update", function(button)
-				if not styled[button] then
-					styled[button] = true
-					skin:Call(P.ItemButton, button)
+		local function style(button)
+			if not styled[button] then
+				styled[button] = true
+				skin:Call(P.ItemButton, button)
+				if button.UpdateBorder and button.info then
+					skin:Call(button.UpdateBorder, button)
 				end
-			end)
+			end
 		end
+
+		-- Every item grid lays out through the base class. Slots are styled
+		-- after the grid places them: a slot styled before its first anchor
+		-- can keep a stale, empty position for its icon and border until it
+		-- is anchored again.
+		hooksecurefunc(Bagnon.ItemGroup, "Layout", function(group)
+			for _, button in ipairs(group.buttons) do
+				style(button)
+			end
+		end)
+		-- Bag buttons are anchored as soon as they are made.
+		hooksecurefunc(Bagnon.Bag, "Update", style)
 	end,
 })
 
