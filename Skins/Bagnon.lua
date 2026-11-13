@@ -24,12 +24,12 @@ ns.RegisterSkin({
 		})
 
 		-- Bag, bank, vault, and guild bank slots all update through the base
-		-- class, so one hook reaches every slot as it is first filled. Updates
-		-- are constant while bags change, so only the first one per slot pays
-		-- for error isolation.
-		if Bagnon.Item then
-			local styled = setmetatable({}, { __mode = "k" })
-			hooksecurefunc(Bagnon.Item, "Update", function(button)
+		-- class, so one hook reaches every slot as it is first filled, and the
+		-- bag buttons above them likewise. Updates are constant while bags
+		-- change, so only the first one per button pays for error isolation.
+		local styled = setmetatable({}, { __mode = "k" })
+		for _, class in ipairs({ Bagnon.Item, Bagnon.Bag }) do
+			hooksecurefunc(class, "Update", function(button)
 				if not styled[button] then
 					styled[button] = true
 					skin:Call(P.ItemButton, button)

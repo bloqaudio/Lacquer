@@ -257,8 +257,7 @@ function ops.ItemButton(button)
 	if not (has(button, "CreateBackdrop") and has(S, "HandleIconBorder")) then
 		return false
 	end
-	local name = button:GetName()
-	local icon = button.icon or button.Icon or (name and _G[name .. "IconTexture"])
+	local icon = ns.ItemIcon(button)
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
 	if normal then
 		normal:SetAlpha(0)

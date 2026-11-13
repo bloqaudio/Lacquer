@@ -378,8 +378,7 @@ local function onQuality(button, quality)
 end
 
 function ops.ItemButton(button)
-	local name = button:GetName()
-	local icon = button.icon or button.Icon or (name and _G[name .. "IconTexture"])
+	local icon = ns.ItemIcon(button)
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
 	fade(normal)
 	fade(button.IconBorder)

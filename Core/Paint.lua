@@ -53,21 +53,29 @@ function ns.Unmask(texture)
 end
 
 local crops = setmetatable({}, { __mode = "k" })
+local cropping = false
 
 local function reapplyCrop(texture)
+	if cropping then
+		return
+	end
+	cropping = true
 	local crop = crops[texture]
 	texture:SetTexCoord(crop[1], crop[2], crop[3], crop[4])
+	cropping = false
 end
 
--- A new texture resets the crop on modern clients, and item buttons swap
--- their icon on every update. crop is a live table, so a suite setting that
--- changes it in place carries through.
+-- A new texture resets the crop on modern clients, item buttons swap their
+-- icon on every update, and Forever's item buttons reset the coords to full
+-- after each new icon. crop is a live table, so a suite setting that changes
+-- it in place carries through.
 function ns.KeepCrop(texture, crop)
 	local first = not crops[texture]
 	crops[texture] = crop
 	reapplyCrop(texture)
 	if first then
 		hooksecurefunc(texture, "SetTexture", reapplyCrop)
+		hooksecurefunc(texture, "SetTexCoord", reapplyCrop)
 	end
 end
 
@@ -95,6 +103,16 @@ function ns.StyleSettingsControl(child)
 		ns.Paint.ArrowButton(child, "left")
 	elseif parent.IncrementButton == child then
 		ns.Paint.ArrowButton(child, "right")
+	end
+end
+
+-- Some addons keep the icon's file ID in .icon and the texture in .Icon.
+function ns.ItemIcon(button)
+	local name = button:GetName()
+	for _, icon in ipairs({ button.icon, button.Icon, name and _G[name .. "IconTexture"] }) do
+		if type(icon) == "table" and icon.IsObjectType and icon:IsObjectType("Texture") then
+			return icon
+		end
 	end
 end
 

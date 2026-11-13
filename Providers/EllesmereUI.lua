@@ -101,7 +101,7 @@ function ops.ItemButton(button)
 		S.ItemButton(button)
 		return
 	end
-	local icon = button.icon or button.Icon
+	local icon = ns.ItemIcon(button)
 	if not (S and S.SquareIcon and icon) then
 		return false
 	end
