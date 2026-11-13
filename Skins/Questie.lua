@@ -29,11 +29,12 @@ local function hasRedButtonArt(button)
 	return false
 end
 
--- Each options tab is a canvas named QuestieOptionsTab_<window>_<tab>.
+-- Each options tab is a canvas named QuestieOptionsTab_<window>_<tab>. Its
+-- scroll frames share that prefix, so the canvas is the one carrying its tab.
 local function canvasOf(frame)
 	while frame and frame ~= UIParent do
 		local name = frame:GetName()
-		if name and name:find("^QuestieOptionsTab_") then
+		if name and name:find("^QuestieOptionsTab_") and frame.tab then
 			return frame
 		end
 		frame = frame:GetParent()
@@ -110,6 +111,14 @@ ns.RegisterSkin({
 				tab.Selected:SetAlpha(0)
 				ns.Unmask(tab.Icon)
 				P.Icon(tab.Icon, tab)
+				-- The hover art is shaped and sized for the round tab, not the
+				-- squared icon; it follows the icon when a press nudges it.
+				local highlight = tab.Highlight
+				if highlight then
+					highlight:ClearAllPoints()
+					highlight:SetAllPoints(tab.Icon)
+					highlight:SetColorTexture(1, 1, 1, 0.2)
+				end
 			end)
 		end
 
