@@ -1,0 +1,80 @@
+name: Manual Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      part:
+        description: Version segment to increment
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: version-bump-main
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Tag the next version
+        run: |
+          set -euo pipefail
+
+          # The latest release tag is the current version; the TOCs only carry a placeholder.
+          CURRENT=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+          CURRENT="${CURRENT#v}"
+          echo "Current version: ${CURRENT}"
+
+          if ! [[ "${CURRENT}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Unexpected version format: ${CURRENT}" >&2
+            exit 1
+          fi
+
+          IFS=. read -r MAJOR MINOR PATCH <<< "${CURRENT}"
+
+          case "${{ inputs.part }}" in
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            *)
+              echo "Unsupported version part: ${{ inputs.part }}" >&2
+              exit 1
+              ;;
+          esac
+
+          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "New version: ${NEW_TAG}"
+          echo "NEW_TAG=${NEW_TAG}" >> "${GITHUB_ENV}"
+
+          git tag "${NEW_TAG}"
+          git push origin "${NEW_TAG}"
+
+      # A tag pushed with the workflow token doesn't start other workflows.
+      - name: Trigger retail release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run release.yml --ref main -f tag="${NEW_TAG}"
