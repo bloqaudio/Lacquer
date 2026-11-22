@@ -28,6 +28,7 @@ If ElvUI and EllesmereUI are both enabled, Lacquer matches ElvUI and warns you o
 | BugSack | all |
 | Clique (binding window and spell picker) | all |
 | DBM (bars and options window) | all |
+| GearQuest Forever (log window, its menus and panels, and the character-slot upgrade icons) | Forever |
 | Pawn | all |
 | PetTracker (Rivals journal, journal tabs, and battle pet switcher) | all |
 | Questie (tracker and options) | all |
