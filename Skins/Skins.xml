@@ -9,6 +9,7 @@
 	<Script file="Clique.lua"/>
 	<Script file="DBM.lua"/>
 	<Script file="DBM-GUI.lua"/>
+	<Script file="DungeonMaster.lua"/>
 	<Script file="ForeverCompanion.lua"/>
 	<Script file="GearQuest.lua"/>
 	<Script file="Pawn.lua"/>
