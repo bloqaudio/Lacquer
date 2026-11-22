@@ -17,10 +17,14 @@ local LOG_OPENERS = {
 	"MountTooltipsPanelSettings", "ToggleSpecPicker", "RefreshSpecPickerRows", "ShowSlotRankTooltip",
 }
 local CUSTOM_OPENERS = { "ShowEditor", "ToggleBaseMenu" }
+local PAGE_BUILDERS = { "SetPageTab", "ShowLookupResults", "ShowLookupDetail" }
 
 local MAX_UPGRADE_ICONS = 3
 local PORTRAIT = "Interface\\AddOns\\GearQuestForever\\Art\\GearQuest-Portrait"
 local PORTRAIT_CROP = 0.15
+local METAL_EDGE = "Interface\\Tooltips\\UI-Tooltip-Border"
+local LIST_TABS = { "tabActive", "tabCompleted", "tabRemoved", "tabTracked" }
+local SIDE_TABS = { "tabLog", "tabLookup", "tabSimulator", "tabSettings" }
 
 ns.RegisterSkin({
 	id = "GearQuestForever",
@@ -32,8 +36,10 @@ ns.RegisterSkin({
 
 		-- GearQuest sets its backdrops again whenever it lays a panel out, so the
 		-- suite's sits on a frame of its own and GearQuest's is cleared each time.
+		-- kind "panel" is opaque, for panels that cover the list; "edge" is a
+		-- border around a pane whose own art fills it, so it sits just outside.
 		local covered = setmetatable({}, { __mode = "k" })
-		local function cover(frame)
+		local function cover(frame, kind)
 			if covered[frame] or not frame.ClearBackdrop then
 				return
 			end
@@ -44,11 +50,25 @@ ns.RegisterSkin({
 					self:ClearBackdrop()
 				end
 			end)
-			-- Opaque and under the panel's own text: these panels cover the list.
 			local box = CreateFrame("Frame", nil, frame)
-			box:SetAllPoints(frame)
+			if kind == "edge" then
+				box:SetPoint("TOPLEFT", frame, "TOPLEFT", -1, 1)
+				box:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 1, -1)
+			else
+				box:SetAllPoints(frame)
+			end
+			-- Under the frame's own text and art.
 			box:SetFrameLevel(math.max(frame:GetFrameLevel() - 1, 0))
-			P.Panel(box)
+			if kind == "panel" then
+				P.Panel(box)
+			else
+				P.Backdrop(box)
+			end
+		end
+
+		local function isMetalEdge(frame)
+			local info = frame.backdropInfo
+			return info and info.edgeFile == METAL_EDGE and not info.bgFile
 		end
 
 		-- Some sliders get GearQuest's thumb art back each time their panel
@@ -76,6 +96,9 @@ ns.RegisterSkin({
 		end
 
 		local function styleControl(child)
+			if isMetalEdge(child) then
+				cover(child, "edge")
+			end
 			if child:IsObjectType("ScrollFrame") then
 				P.ScrollBar(child.ScrollBar)
 			elseif child:IsObjectType("Slider") then
@@ -102,7 +125,7 @@ ns.RegisterSkin({
 			for _, name in ipairs(PANELS) do
 				local frame = _G[name]
 				if frame then
-					cover(frame)
+					cover(frame, "panel")
 					ns.Walk(frame, styleControl)
 				end
 			end
@@ -124,6 +147,25 @@ ns.RegisterSkin({
 			ns.FrameIcon(hit, portrait)
 		end
 
+		local function styleTabs()
+			local frame = GQ.Log.frame
+			if not frame then
+				return
+			end
+			for _, list in ipairs({ LIST_TABS, SIDE_TABS }) do
+				for _, key in ipairs(list) do
+					local tab = frame[key]
+					if tab then
+						cover(tab, "tab")
+						-- A strip in the tab's fill colour that opens one side into the pane.
+						if tab.gqOpenCover then
+							tab.gqOpenCover:SetAlpha(0)
+						end
+					end
+				end
+			end
+		end
+
 		local function styleWindow()
 			local frame = GQ.Log.frame
 			if not frame then
@@ -136,11 +178,46 @@ ns.RegisterSkin({
 			if frame.NineSlice then
 				frame.NineSlice:Hide()
 			end
-			ns.Walk(frame, styleControl)
+			-- Panels first: some carry the same edge the walk turns into a border.
 			stylePanels()
+			ns.Walk(frame, styleControl)
+			styleTabs()
 		end
 
 		skin:Hook(GQ.Log, "Show", styleWindow)
+		-- Pages and lookup panes are built the first time they are shown.
+		for _, method in ipairs(PAGE_BUILDERS) do
+			if type(GQ.Log[method]) == "function" then
+				skin:Hook(GQ.Log, method, styleWindow)
+			end
+		end
+		for _, method in ipairs({ "UpdateTabVisuals", "LayoutSideTabs" }) do
+			if type(GQ.Log[method]) == "function" then
+				skin:Hook(GQ.Log, method, styleTabs)
+			end
+		end
+		-- Copies of the list's top edge, split around the selected tab.
+		if type(GQ.Log.LayoutListTopOpening) == "function" then
+			skin:Hook(GQ.Log, "LayoutListTopOpening", function()
+				local list = GQ.Log.frame and GQ.Log.frame.listInset
+				if list and list.gqTopLeft then
+					list.gqTopLeft:SetAlpha(0)
+					list.gqTopRight:SetAlpha(0)
+				end
+			end)
+		end
+		-- The tooltips panel's thin scroll thumbs.
+		local slimThumbs = setmetatable({}, { __mode = "k" })
+		if type(GQ.Log.UpdateTooltipsSlimScrollBar) == "function" then
+			skin:Hook(GQ.Log, "UpdateTooltipsSlimScrollBar", function(_, scroll)
+				local thumb = scroll and scroll.gqSlimThumb
+				local theme = ns.Theme()
+				if thumb and theme and not slimThumbs[thumb] then
+					slimThumbs[thumb] = true
+					thumb:SetColorTexture(theme.accent.r, theme.accent.g, theme.accent.b, 1)
+				end
+			end)
+		end
 		-- List rows, each with a track checkbox, are added as the list refills.
 		skin:Hook(GQ.Log, "Refresh", function()
 			local list = GQ.Log.frame and GQ.Log.frame.scrollChild
